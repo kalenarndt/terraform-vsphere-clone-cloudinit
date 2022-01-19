@@ -53,7 +53,7 @@ variable "thin_provision" {
 variable "tags" {
   type        = bool
   description = "(Optional) Conditional that allows for the setting of tags on a VM"
-  default = false
+  default     = false
 }
 
 variable "vm_prefix" {

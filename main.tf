@@ -39,7 +39,7 @@ data "vsphere_tag" "deployment_tag" {
 }
 
 data "cloudinit_config" "user_data" {
-  for_each = var.deployment_vm_data
+  for_each      = var.deployment_vm_data
   gzip          = true
   base64_encode = true
 
