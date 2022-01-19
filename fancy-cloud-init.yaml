@@ -1,0 +1,9 @@
+# cloud-config
+# ToDo:  use cloud-init apt config instead of bootcmd https://cloudinit.readthedocs.io/en/latest/topics/examples.html#additional-apt-configuration-and-repositories
+bootcmd:
+  - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+  - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+package_update: true
+package_upgrade: true
+packages: 
+  - vault-enterprise
