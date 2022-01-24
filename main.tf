@@ -55,6 +55,7 @@ resource "vsphere_virtual_machine" "deployed-vm" {
   resource_pool_id = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   folder           = var.folder_path != "" ? var.folder_path : ""
+  firmware         = data.vsphere_virtual_machine.deployment_template.firmware
   num_cpus         = each.value.num_cpus
   memory           = each.value.memory
   guest_id         = data.vsphere_virtual_machine.deployment_template.guest_id
