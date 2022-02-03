@@ -19,8 +19,15 @@ variable "datacenter" {
 }
 
 variable "datastore" {
-  description = "variable for the datastore that the VMs will be placed on"
+  description = "Variable for the datastore that the VMs will be placed on"
   type        = string
+  default     = ""
+}
+
+variable "datastore_cluster" {
+  type        = string
+  description = "(Optional) Conditional that when set to true deploys the VMs on a Datastore Cluster"
+  default     = ""
 }
 
 variable "cluster" {

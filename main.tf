@@ -5,6 +5,7 @@ data "vsphere_datacenter" "dc" {
 
 # data block to fetch target datastore id
 data "vsphere_datastore" "datastore" {
+  for_each      = length(var.datastore) >= 1 ? { "datastore" : "" } : {}
   name          = var.datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -38,6 +39,11 @@ data "vsphere_tag" "deployment_tag" {
   category_id = data.vsphere_tag_category.tag_category[each.key].id
 }
 
+data "vsphere_datastore_cluster" "dsc" {
+  for_each = length(var.datastore_cluster) >= 1 ? { "dsc" : "" } : {}
+  name     = var.datastore_cluster
+}
+
 data "cloudinit_config" "user_data" {
   for_each      = var.deployment_vm_data
   gzip          = true
@@ -50,17 +56,18 @@ data "cloudinit_config" "user_data" {
 }
 
 resource "vsphere_virtual_machine" "deployed-vm" {
-  for_each         = var.deployment_vm_data
-  name             = "${var.vm_prefix}${each.value.name}"
-  resource_pool_id = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
-  datastore_id     = data.vsphere_datastore.datastore.id
-  folder           = var.folder_path != "" ? var.folder_path : ""
-  firmware         = data.vsphere_virtual_machine.deployment_template.firmware
-  num_cpus         = each.value.num_cpus
-  memory           = each.value.memory
-  guest_id         = data.vsphere_virtual_machine.deployment_template.guest_id
-  scsi_type        = data.vsphere_virtual_machine.deployment_template.scsi_type
-  tags             = var.tags ? [data.vsphere_tag.deployment_tag[each.key].id] : null
+  for_each             = var.deployment_vm_data
+  name                 = "${var.vm_prefix}${each.value.name}"
+  resource_pool_id     = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
+  datastore_id         = var.datastore != "" ? data.vsphere_datastore.datastore["datastore"].id : null
+  datastore_cluster_id = var.datastore_cluster != "" ? data.vsphere_datastore_cluster.dsc["dsc"].id : null
+  folder               = var.folder_path != "" ? var.folder_path : ""
+  firmware             = data.vsphere_virtual_machine.deployment_template.firmware
+  num_cpus             = each.value.num_cpus
+  memory               = each.value.memory
+  guest_id             = data.vsphere_virtual_machine.deployment_template.guest_id
+  scsi_type            = data.vsphere_virtual_machine.deployment_template.scsi_type
+  tags                 = var.tags ? [data.vsphere_tag.deployment_tag[each.key].id] : null
 
   network_interface {
     network_id   = data.vsphere_network.deployment_network.id

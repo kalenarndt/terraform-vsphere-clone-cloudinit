@@ -27,6 +27,7 @@ No modules.
 | [vsphere_compute_cluster.compute_cluster](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/compute_cluster) | data source |
 | [vsphere_datacenter.dc](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/datacenter) | data source |
 | [vsphere_datastore.datastore](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/datastore) | data source |
+| [vsphere_datastore_cluster.dsc](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/datastore_cluster) | data source |
 | [vsphere_network.deployment_network](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/network) | data source |
 | [vsphere_tag.deployment_tag](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/tag) | data source |
 | [vsphere_tag_category.tag_category](https://registry.terraform.io/providers/hashicorp/vsphere/latest/docs/data-sources/tag_category) | data source |
@@ -38,7 +39,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | variable for the vsphere cluster that the VMs will be placed in | `string` | n/a | yes |
 | <a name="input_datacenter"></a> [datacenter](#input\_datacenter) | variable for the datacenter where the VMs will be deployed | `string` | n/a | yes |
-| <a name="input_datastore"></a> [datastore](#input\_datastore) | variable for the datastore that the VMs will be placed on | `string` | n/a | yes |
+| <a name="input_datastore"></a> [datastore](#input\_datastore) | Variable for the datastore that the VMs will be placed on | `string` | `""` | no |
+| <a name="input_datastore_cluster"></a> [datastore\_cluster](#input\_datastore\_cluster) | (Optional) Conditional that when set to true deploys the VMs on a Datastore Cluster | `string` | `""` | no |
 | <a name="input_deployment_vm_data"></a> [deployment\_vm\_data](#input\_deployment\_vm\_data) | (Required) Map containing the configuration for the virtual machines | <pre>map(object({<br>    name         = string<br>    num_cpus     = number<br>    memory       = number<br>    disk_size    = number<br>    user_data    = string<br>    metadata     = string<br>    tag_category = optional(string)<br>    tag_name     = optional(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_folder_path"></a> [folder\_path](#input\_folder\_path) | (Optional) variable for the folder path that will be used when deploying workloads | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Conditional that allows for the setting of tags on a VM | `bool` | `false` | no |
