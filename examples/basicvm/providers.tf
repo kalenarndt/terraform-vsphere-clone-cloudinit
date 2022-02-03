@@ -1,6 +1,6 @@
 provider "vsphere" {
-  # user                 = var.vcenter_username
-  # password             = var.vcenter_password
-  # vsphere_server       = var.vcenter_server
+  user                 = "administrator@vsphere.local"
+  password             = "VMware123!"
+  vsphere_server       = "vc.bmrf.io"
   allow_unverified_ssl = true
 }

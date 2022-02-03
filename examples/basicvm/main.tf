@@ -1,12 +1,12 @@
 module "vault" {
-  source        = "github.com/kalenarndt/terraform-vsphere-vsphere-clone-cloudinit"
-  datacenter    = "Black Mesa"
-  datastore     = "ESXi2-SSD"
-  cluster       = "Compute"
-  vm_prefix     = "hc-"
-  template_name = "HashiCorp-linux-ubuntu-server-20-04-lts"
-  folder_path   = "HashiCorp/Workloads"
-  vm_network    = "az1|hashicorp-01|hashicorp-network-172.23.200"
+  source            = "github.com/kalenarndt/terraform-vsphere-vsphere-clone-cloudinit"
+  datacenter        = "Black Mesa"
+  datastore_cluster = "Local"
+  cluster           = "Compute"
+  vm_prefix         = "hc-"
+  template_name     = "linux-ubuntu-server-20-04-lts"
+  folder_path       = "HashiCorp/Workloads"
+  vm_network        = "seg-web"
   deployment_vm_data = {
     "vault" = {
       disk_size = 50
