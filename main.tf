@@ -42,7 +42,7 @@ data "vsphere_tag" "deployment_tag" {
 data "vsphere_datastore_cluster" "dsc" {
   for_each      = length(var.datastore_cluster) >= 1 ? { "dsc" : "" } : {}
   name          = var.datastore_cluster
-  datacenter_id = data.vsphere_datacenter.dc
+  datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "cloudinit_config" "user_data" {
