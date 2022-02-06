@@ -1,5 +1,5 @@
 module "vault" {
-  source        = "https://github.com/kalenarndt/terraform-vsphere-vsphere-clone-cloudinit"
+  source        = "github.com/kalenarndt/terraform-vsphere-vsphere-clone-cloudinit"
   datacenter    = "Black Mesa"
   datastore     = "ESXi2-SSD"
   cluster       = "Compute"
