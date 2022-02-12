@@ -5,8 +5,14 @@ data "vsphere_datacenter" "dc" {
 
 # data block to fetch target datastore id
 data "vsphere_datastore" "datastore" {
-  for_each      = length(var.datastore) >= 1 ? { "datastore" : "" } : {}
-  name          = var.datastore
+  count         = var.datastore == true && var.datastore_cluster == false ? 1 : 0
+  name          = var.datastore_name
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore_cluster" "datastore_cluster" {
+  count         = var.datastore == false && var.datastore_cluster == false ? 1 : 0
+  name          = var.datastore_cluster_name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -24,8 +30,21 @@ data "vsphere_network" "deployment_network" {
 
 # data block to fetch the deployment vm template
 data "vsphere_virtual_machine" "deployment_template" {
+  count         = var.template ? 1 : 0
   name          = var.template_name
   datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_content_library" "content_library" {
+  count = var.content_library ? 1 : 0
+  name  = var.content_library_name
+}
+
+data "vsphere_content_library_item" "cl_item" {
+  count      = var.content_library ? 1 : 0
+  library_id = data.vsphere_content_library.content_library[0].id
+  type       = var.content_library_template_type
+  name       = var.content_library_name
 }
 
 data "vsphere_tag_category" "tag_category" {
@@ -37,12 +56,6 @@ data "vsphere_tag" "deployment_tag" {
   for_each    = var.tags ? var.deployment_vm_data : {}
   name        = each.value.tag_name
   category_id = data.vsphere_tag_category.tag_category[each.key].id
-}
-
-data "vsphere_datastore_cluster" "dsc" {
-  for_each      = length(var.datastore_cluster) >= 1 ? { "dsc" : "" } : {}
-  name          = var.datastore_cluster
-  datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "cloudinit_config" "user_data" {
@@ -60,30 +73,36 @@ resource "vsphere_virtual_machine" "deployed-vm" {
   for_each             = var.deployment_vm_data
   name                 = "${var.vm_prefix}${each.value.name}"
   resource_pool_id     = data.vsphere_compute_cluster.compute_cluster.resource_pool_id
-  datastore_id         = var.datastore != "" ? data.vsphere_datastore.datastore["datastore"].id : null
-  datastore_cluster_id = var.datastore_cluster != "" ? data.vsphere_datastore_cluster.dsc["dsc"].id : null
-  folder               = var.folder_path != "" ? var.folder_path : ""
-  firmware             = data.vsphere_virtual_machine.deployment_template.firmware
+  datastore_id         = var.datastore == true && var.datastore_cluster == false ? data.vsphere_datastore.datastore[0].id : null
+  datastore_cluster_id = var.datastore == false && var.datastore_cluster == true ? data.vsphere_datastore_cluster.datastore_cluster[0].id : null
+  firmware             = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].firmware : var.firmware
+  folder               = var.folder_path != null ? var.folder_path : null
   num_cpus             = each.value.num_cpus
   memory               = each.value.memory
-  guest_id             = data.vsphere_virtual_machine.deployment_template.guest_id
-  scsi_type            = data.vsphere_virtual_machine.deployment_template.scsi_type
+  guest_id             = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].guest_id : null
+  scsi_type            = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].scsi_type : var.scsi_type
   tags                 = var.tags ? [data.vsphere_tag.deployment_tag[each.key].id] : null
 
   network_interface {
     network_id   = data.vsphere_network.deployment_network.id
-    adapter_type = data.vsphere_virtual_machine.deployment_template.network_interface_types[0]
+    adapter_type = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].network_interface_types[0] : var.network_adapter_type
   }
 
-  disk {
-    label            = "os"
-    size             = each.value.disk_size != "" ? each.value.disk_size : data.vsphere_virtual_machine.deployment_template.disks.0.size
-    eagerly_scrub    = data.vsphere_virtual_machine.deployment_template.disks.0.eagerly_scrub
-    thin_provisioned = var.thin_provision
+
+  ## Currently working
+  dynamic "disk" {
+    for_each = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].disks : []
+    content {
+      label            = "placeholder"
+      size             = var.content_library == false ? (each.value.disk_size != "" ? each.value.disk_size : data.vsphere_virtual_machine.deployment_template[0].disks.0.size) : each.value.disk_size
+      eagerly_scrub    = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].disks.0.eagerly_scrub : null
+      thin_provisioned = var.thin_provision
+    }
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.deployment_template.id
+    template_uuid = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].id : data.vsphere_content_library_item.cl_item[0].id
+    linked_clone  = var.linked_clone == true && var.content_library_template_type != "ovf" ? var.linked_clone : false #forcing a bool type constraint so this has to be true / false instead of 1 0
   }
 
   extra_config = {
