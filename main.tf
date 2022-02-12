@@ -40,7 +40,7 @@ data "vsphere_content_library" "content_library" {
   name  = var.content_library_name
 }
 
-data "vsphere_content_library_item" "cl_item" {
+data "vsphere_content_library_item" "item" {
   count      = var.content_library ? 1 : 0
   library_id = data.vsphere_content_library.content_library[0].id
   type       = var.content_library_template_type
@@ -101,7 +101,7 @@ resource "vsphere_virtual_machine" "deployed-vm" {
   }
 
   clone {
-    template_uuid = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].id : data.vsphere_content_library_item.cl_item[0].id
+    template_uuid = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].id : data.vsphere_content_library_item.item[0].id
     linked_clone  = var.linked_clone == true && var.content_library_template_type != "ovf" ? var.linked_clone : false #forcing a bool type constraint so this has to be true / false instead of 1 0
   }
 
