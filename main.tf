@@ -100,9 +100,13 @@ resource "vsphere_virtual_machine" "deployed-vm" {
     }
   }
 
-  clone {
-    template_uuid = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].id : data.vsphere_content_library_item.item[0].id
-    linked_clone  = var.linked_clone == true && var.content_library_template_type != "ovf" ? var.linked_clone : false #forcing a bool type constraint so this has to be true / false instead of 1 0
+
+  dynamic "clone" {
+    for_each = var.template ? ["true"] : []
+    content {
+      template_uuid = var.content_library == false ? data.vsphere_virtual_machine.deployment_template[0].id : data.vsphere_content_library_item.item[0].id
+      linked_clone  = var.linked_clone == true && var.content_library_template_type != "ovf" ? var.linked_clone : false #forcing a bool type constraint so this has to be true / false instead of 1 0
+    }
   }
 
   extra_config = {
