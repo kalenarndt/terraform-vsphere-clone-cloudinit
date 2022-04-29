@@ -59,11 +59,12 @@ data "vsphere_tag" "deployment_tag" {
 }
 
 data "cloudinit_config" "user_data" {
+  for_each      = var.deployment_vm_data
   gzip          = true
   base64_encode = true
 
   dynamic "part" {
-    for_each     = var.user_data_map
+    for_each = var.deployment_vm_data[each.key].user_data_map
     content {
       content_type = part.value.content_type
       content      = templatefile("${path.cwd}/${part.value.file_path}", part.value.vars)
@@ -114,7 +115,7 @@ resource "vsphere_virtual_machine" "deployed-vm" {
   extra_config = {
     "guestinfo.metadata"          = base64gzip(file("${path.cwd}/${each.value.metadata}"))
     "guestinfo.metadata.encoding" = "gzip+base64"
-    "guestinfo.userdata"          = data.cloudinit_config.user_data.rendered
+    "guestinfo.userdata"          = data.cloudinit_config.user_data[each.key].rendered
     "guestinfo.userdata.encoding" = "gzip+base64"
   }
 

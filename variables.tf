@@ -4,10 +4,14 @@ variable "deployment_vm_data" {
     num_cpus     = number
     memory       = number
     disk_size    = number
-    user_data    = optional(string)
     metadata     = string
     tag_category = optional(string)
     tag_name     = optional(string)
+    user_data_map = map(object({
+      content_type = string
+      file_path    = string
+      vars         = map(string)
+    }))
   }))
   description = "(Required) Map containing the configuration for the virtual machines"
 }
@@ -158,10 +162,10 @@ variable "template_name" {
 # }
 
 
-variable "user_data_map" {
-  type = map(object({
-      content_type = string
-      file_path =  string
-      vars = map(string)
-  }))
-}
+# variable "user_data_map" {
+#   type = map(object({
+#       content_type = string
+#       file_path =  string
+#       vars = map(string)
+#   }))
+# }

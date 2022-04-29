@@ -13,7 +13,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vault"></a> [vault](#module\_vault) | github.com/kalenarndt/terraform-vsphere-vsphere-clone-cloudinit | n/a |
+| <a name="module_test-deploy"></a> [test-deploy](#module\_test-deploy) | ./terraform-vsphere-vsphere-clone-cloudinit | n/a |
 
 ## Resources
 
