@@ -4,7 +4,7 @@ variable "deployment_vm_data" {
     num_cpus     = number
     memory       = number
     disk_size    = number
-    user_data    = string
+    user_data    = optional(string)
     metadata     = string
     tag_category = optional(string)
     tag_name     = optional(string)
@@ -12,13 +12,10 @@ variable "deployment_vm_data" {
   description = "(Required) Map containing the configuration for the virtual machines"
 }
 
-
 variable "datacenter" {
   description = "variable for the datacenter where the VMs will be deployed"
   type        = string
 }
-
-
 
 variable "cluster" {
   description = "variable for the vsphere cluster that the VMs will be placed in"
@@ -29,8 +26,6 @@ variable "vm_network" {
   description = "(Required) Target network where the VMs will be deployed"
   type        = string
 }
-
-
 
 variable "folder_path" {
   description = "(Optional) variable for the folder path that will be used when deploying workloads"
@@ -43,8 +38,6 @@ variable "vm_prefix" {
   description = "(Optional) Prefix that will be prepended to the VMs that you deploy"
   default     = ""
 }
-
-
 
 ### VM Settings
 
@@ -154,4 +147,21 @@ variable "template_name" {
   description = "(Optional) Name of the template that the VMs will be cloned from. Required if var.template is set to true"
   type        = string
   default     = ""
+}
+
+# variable "user_data" {
+#   type = list(object({
+#       content_type = string
+#       file_path =  string
+#       # vars = map(string)
+#   }))
+# }
+
+
+variable "user_data_map" {
+  type = map(object({
+      content_type = string
+      file_path =  string
+      vars = map(string)
+  }))
 }
