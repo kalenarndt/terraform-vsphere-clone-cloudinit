@@ -1,6 +1,6 @@
 #cloud-config
-local-hostname: vault
-instance-id: vault
+local-hostname: ${hostname}
+instance-id: ${hostname}
 wait-on-network:
   ipv4: false
   ipv6: false

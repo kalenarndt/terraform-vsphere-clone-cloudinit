@@ -1,4 +1,4 @@
-# terraform-vsphere-vsphere-clone-cloudinit
+# terraform-vsphere-clone-cloudinit
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -48,7 +48,7 @@ No modules.
 | <a name="input_datastore_cluster"></a> [datastore\_cluster](#input\_datastore\_cluster) | (Optional) Conditional that allows for the use of Datastore Cluster when deploying VMs | `bool` | `false` | no |
 | <a name="input_datastore_cluster_name"></a> [datastore\_cluster\_name](#input\_datastore\_cluster\_name) | (Optional) Name of the Datastore Cluster that will be used when deploying VMs. Required if var.datastore\_cluster is set to true. | `string` | `""` | no |
 | <a name="input_datastore_name"></a> [datastore\_name](#input\_datastore\_name) | (Optional) Name of the datastore that will be used when deploying VMs. Required if var.datastore is set to true. | `string` | `""` | no |
-| <a name="input_deployment_vm_data"></a> [deployment\_vm\_data](#input\_deployment\_vm\_data) | (Required) Map containing the configuration for the virtual machines | <pre>map(object({<br>    name         = string<br>    num_cpus     = number<br>    memory       = number<br>    disk_size    = number<br>    metadata     = string<br>    tag_category = optional(string)<br>    tag_name     = optional(string)<br>    user_data_map = map(object({<br>      content_type = string<br>      file_path    = string<br>      vars         = map(string)<br>    }))<br>  }))</pre> | n/a | yes |
+| <a name="input_deployment_vm_data"></a> [deployment\_vm\_data](#input\_deployment\_vm\_data) | (Required) Map containing the configuration for the virtual machines | <pre>map(object({<br>    name      = string<br>    num_cpus  = number<br>    memory    = number<br>    disk_size = number<br>    metadata = list(object({<br>      file_path = string<br>      vars      = map(string)<br>    }))<br>    tag_category = optional(string)<br>    tag_name     = optional(string)<br>    user_data = map(object({<br>      content_type = string<br>      file_path    = string<br>      vars         = map(string)<br>    }))<br>  }))</pre> | n/a | yes |
 | <a name="input_firmware"></a> [firmware](#input\_firmware) | (Optional) Bios type that will be used when creating the VM | `string` | `""` | no |
 | <a name="input_folder_path"></a> [folder\_path](#input\_folder\_path) | (Optional) variable for the folder path that will be used when deploying workloads | `string` | `""` | no |
 | <a name="input_linked_clone"></a> [linked\_clone](#input\_linked\_clone) | (Optional) Conditional that determines if a cloned VM will be deployed as a linked clone | `bool` | `false` | no |

@@ -1,13 +1,16 @@
 variable "deployment_vm_data" {
   type = map(object({
-    name         = string
-    num_cpus     = number
-    memory       = number
-    disk_size    = number
-    metadata     = string
+    name      = string
+    num_cpus  = number
+    memory    = number
+    disk_size = number
+    metadata = list(object({
+      file_path = string
+      vars      = map(string)
+    }))
     tag_category = optional(string)
     tag_name     = optional(string)
-    user_data_map = map(object({
+    user_data = map(object({
       content_type = string
       file_path    = string
       vars         = map(string)
@@ -152,20 +155,3 @@ variable "template_name" {
   type        = string
   default     = ""
 }
-
-# variable "user_data" {
-#   type = list(object({
-#       content_type = string
-#       file_path =  string
-#       # vars = map(string)
-#   }))
-# }
-
-
-# variable "user_data_map" {
-#   type = map(object({
-#       content_type = string
-#       file_path =  string
-#       vars = map(string)
-#   }))
-# }
